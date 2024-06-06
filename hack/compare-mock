@@ -5,6 +5,8 @@ set -x
 
 export KUBEBUILDER_ASSETS=$(go run sigs.k8s.io/controller-runtime/tools/setup-envtest@latest use -p path)
 
+export KCC_USE_DIRECT_RECONCILERS=SpannerDatabase
+
 rm -rf $(pwd)/artifactz/mocks
 
 RUN_TESTS=TestAllInSeries/$1

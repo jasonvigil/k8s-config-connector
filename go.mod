@@ -14,6 +14,7 @@ require (
 	cloud.google.com/go/profiler v0.4.0
 	cloud.google.com/go/resourcemanager v1.9.7
 	cloud.google.com/go/securesourcemanager v0.1.5
+	cloud.google.com/go/spanner v1.60.0
 	contrib.go.opencensus.io/exporter/prometheus v0.1.0
 	github.com/GoogleCloudPlatform/declarative-resource-client-library v1.62.0
 	github.com/GoogleCloudPlatform/k8s-config-connector/mockgcp v0.0.0-20240614222432-4bde5b345380

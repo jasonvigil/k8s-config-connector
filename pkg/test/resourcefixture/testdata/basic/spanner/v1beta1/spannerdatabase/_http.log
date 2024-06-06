@@ -125,9 +125,9 @@ X-Xss-Protection: 0
 
 ---
 
-GET https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}?alt=json
+GET https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}?%24alt=json%3Benum-encoding%3Dint
 Content-Type: application/json
-User-Agent: Terraform/ (+https://www.terraform.io) Terraform-Plugin-SDK/2.10.1 terraform-provider-google-beta/kcc/controller-manager
+x-goog-request-params: name=projects%2F${projectId}%2Finstances%2Fspannerinstance-${uniqueId}%2Fdatabases%2Fspannerdatabase-${uniqueId}
 
 404 Not Found
 Cache-Control: private
@@ -150,77 +150,16 @@ X-Xss-Protection: 0
 
 ---
 
-POST https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases?alt=json
+POST https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases?%24alt=json%3Benum-encoding%3Dint
 Content-Type: application/json
-User-Agent: Terraform/ (+https://www.terraform.io) Terraform-Plugin-SDK/2.10.1 terraform-provider-google-beta/kcc/controller-manager
+x-goog-request-params: parent=projects%2F${projectId}%2Finstances%2Fspannerinstance-${uniqueId}
 
 {
-  "createStatement": "CREATE DATABASE `spannerdatabase-${uniqueId}`"
-}
-
-200 OK
-Cache-Control: private
-Content-Type: application/json; charset=UTF-8
-Server: ESF
-Vary: Origin
-Vary: X-Origin
-Vary: Referer
-X-Content-Type-Options: nosniff
-X-Frame-Options: SAMEORIGIN
-X-Xss-Protection: 0
-
-{
-  "metadata": {
-    "@type": "type.googleapis.com/google.spanner.admin.database.v1.CreateDatabaseMetadata",
-    "database": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}"
-  },
-  "name": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/operations/${operationID}"
-}
-
----
-
-GET https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/operations/${operationID}?alt=json
-Content-Type: application/json
-User-Agent: Terraform/ (+https://www.terraform.io) Terraform-Plugin-SDK/2.10.1 terraform-provider-google-beta/kcc/controller-manager
-
-200 OK
-Cache-Control: private
-Content-Type: application/json; charset=UTF-8
-Server: ESF
-Vary: Origin
-Vary: X-Origin
-Vary: Referer
-X-Content-Type-Options: nosniff
-X-Frame-Options: SAMEORIGIN
-X-Xss-Protection: 0
-
-{
-  "done": true,
-  "metadata": {
-    "@type": "type.googleapis.com/google.spanner.admin.database.v1.CreateDatabaseMetadata",
-    "database": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}"
-  },
-  "name": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/operations/${operationID}",
-  "response": {
-    "@type": "type.googleapis.com/google.spanner.admin.database.v1.Database",
-    "createTime": "2024-04-01T12:34:56.123456Z",
-    "databaseDialect": "GOOGLE_STANDARD_SQL",
-    "name": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}",
-    "state": "READY",
-    "versionRetentionPeriod": "1h"
-  }
-}
-
----
-
-PATCH https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/ddl?alt=json
-Content-Type: application/json
-User-Agent: Terraform/ (+https://www.terraform.io) Terraform-Plugin-SDK/2.10.1 terraform-provider-google-beta/kcc/controller-manager
-
-{
-  "statements": [
+  "createStatement": "CREATE DATABASE `spannerdatabase-${uniqueId}`",
+  "extraStatements": [
     "CREATE TABLE t1 (t1 INT64 NOT NULL,) PRIMARY KEY(t1)"
-  ]
+  ],
+  "parent": "projects/${projectId}/instances/spannerinstance-${uniqueId}"
 }
 
 200 OK
@@ -236,20 +175,17 @@ X-Xss-Protection: 0
 
 {
   "metadata": {
-    "@type": "type.googleapis.com/google.spanner.admin.database.v1.UpdateDatabaseDdlMetadata",
-    "database": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}",
-    "statements": [
-      "CREATE TABLE t1 (t1 INT64 NOT NULL,) PRIMARY KEY(t1)"
-    ]
+    "@type": "type.googleapis.com/google.spanner.admin.database.v1.CreateDatabaseMetadata",
+    "database": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}"
   },
   "name": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/operations/${operationID}"
 }
 
 ---
 
-GET https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/operations/${operationID}?alt=json
+GET https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/operations/${operationID}
 Content-Type: application/json
-User-Agent: Terraform/ (+https://www.terraform.io) Terraform-Plugin-SDK/2.10.1 terraform-provider-google-beta/kcc/controller-manager
+x-goog-request-params: name=projects%2F${projectId}%2Finstances%2Fspannerinstance-${uniqueId}%2Fdatabases%2Fspannerdatabase-${uniqueId}%2Foperations%2F${operationID}
 
 200 OK
 Cache-Control: private
@@ -265,11 +201,8 @@ X-Xss-Protection: 0
 {
   "done": true,
   "metadata": {
-    "@type": "type.googleapis.com/google.spanner.admin.database.v1.UpdateDatabaseDdlMetadata",
-    "database": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}",
-    "statements": [
-      "CREATE TABLE t1 (t1 INT64 NOT NULL,) PRIMARY KEY(t1)"
-    ]
+    "@type": "type.googleapis.com/google.spanner.admin.database.v1.CreateDatabaseMetadata",
+    "database": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}"
   },
   "name": "projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}/operations/${operationID}",
   "response": {
@@ -284,9 +217,9 @@ X-Xss-Protection: 0
 
 ---
 
-GET https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}?alt=json
+GET https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}?%24alt=json%3Benum-encoding%3Dint
 Content-Type: application/json
-User-Agent: Terraform/ (+https://www.terraform.io) Terraform-Plugin-SDK/2.10.1 terraform-provider-google-beta/kcc/controller-manager
+x-goog-request-params: name=projects%2F${projectId}%2Finstances%2Fspannerinstance-${uniqueId}%2Fdatabases%2Fspannerdatabase-${uniqueId}
 
 200 OK
 Cache-Control: private
@@ -309,9 +242,9 @@ X-Xss-Protection: 0
 
 ---
 
-DELETE https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}?alt=json
+DELETE https://spanner.googleapis.com/v1/projects/${projectId}/instances/spannerinstance-${uniqueId}/databases/spannerdatabase-${uniqueId}?%24alt=json%3Benum-encoding%3Dint
 Content-Type: application/json
-User-Agent: Terraform/ (+https://www.terraform.io) Terraform-Plugin-SDK/2.10.1 terraform-provider-google-beta/kcc/controller-manager
+x-goog-request-params: database=projects%2F${projectId}%2Finstances%2Fspannerinstance-${uniqueId}%2Fdatabases%2Fspannerdatabase-${uniqueId}
 
 200 OK
 Cache-Control: private
