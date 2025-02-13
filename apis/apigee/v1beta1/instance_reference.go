@@ -26,10 +26,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-var _ refsv1beta1.ExternalNormalizer = &InstanceRef{}
+var _ refsv1beta1.RefNormalizer = &InstanceRef{}
 
-// InstanceRef defines the resource reference to ApigeeInstance, which "External" field
-// holds the GCP identifier for the KRM object.
+// InstanceRef is a reference to a ApigeeInstance resource.
 type InstanceRef struct {
 	// A reference to an externally managed ApigeeInstance resource.
 	// Should be in the format "organizations/{{organizationID}}/instances/{{instanceID}}".
@@ -42,42 +41,42 @@ type InstanceRef struct {
 	Namespace string `json:"namespace,omitempty"`
 }
 
-// NormalizedExternal provision the "External" value for other resource that depends on ApigeeInstance.
-// If the "External" is given in the other resource's spec.ApigeeInstanceRef, the given value will be used.
-// Otherwise, the "Name" and "Namespace" will be used to query the actual ApigeeInstance object from the cluster.
-func (r *InstanceRef) NormalizedExternal(ctx context.Context, reader client.Reader, otherNamespace string) (string, error) {
-	if r.External != "" && r.Name != "" {
-		return "", fmt.Errorf("cannot specify both name and external on %s reference", ApigeeInstanceGVK.Kind)
-	}
-	// From given External
-	if r.External != "" {
-		if _, _, err := ParseInstanceExternal(r.External); err != nil {
-			return "", err
+// Normalize ensures the "External" field is specified for a given InstanceRef,
+// and that it has the correct format.
+//
+// If "External" field is already specified, the format will be validated.
+//
+// If "External" field is not specified, the "Name" and "Namespace" fields will
+// be used to query the referenced object from the K8s API and fetch it's
+// external reference value. If "Namespace" field is not specified, the
+// `defaultNamespace“ will be used instead.
+func (r *InstanceRef) Normalize(ctx context.Context, reader client.Reader, defaultNamespace string) error {
+	if r.External == "" {
+		if r.Namespace == "" {
+			r.Namespace = defaultNamespace
 		}
-		return r.External, nil
+		key := types.NamespacedName{Name: r.Name, Namespace: r.Namespace}
+		u := &unstructured.Unstructured{}
+		u.SetGroupVersionKind(ApigeeInstanceGVK)
+		if err := reader.Get(ctx, key, u); err != nil {
+			if apierrors.IsNotFound(err) {
+				return k8s.NewReferenceNotFoundError(u.GroupVersionKind(), key)
+			}
+			return fmt.Errorf("reading referenced %s %s: %w", ApigeeInstanceGVK, key, err)
+		}
+		// Get external from status.externalRef. This is the most trustworthy place.
+		externalRef, _, err := unstructured.NestedString(u.Object, "status", "externalRef")
+		if err != nil {
+			return fmt.Errorf("reading status.externalRef: %w", err)
+		}
+		if externalRef == "" {
+			return k8s.NewReferenceNotReadyError(u.GroupVersionKind(), key)
+		}
+		r.External = externalRef
 	}
 
-	// From the Config Connector object
-	if r.Namespace == "" {
-		r.Namespace = otherNamespace
+	if _, err := NewInstanceIdentity(r.External); err != nil {
+		return err
 	}
-	key := types.NamespacedName{Name: r.Name, Namespace: r.Namespace}
-	u := &unstructured.Unstructured{}
-	u.SetGroupVersionKind(ApigeeInstanceGVK)
-	if err := reader.Get(ctx, key, u); err != nil {
-		if apierrors.IsNotFound(err) {
-			return "", k8s.NewReferenceNotFoundError(u.GroupVersionKind(), key)
-		}
-		return "", fmt.Errorf("reading referenced %s %s: %w", ApigeeInstanceGVK, key, err)
-	}
-	// Get external from status.externalRef. This is the most trustworthy place.
-	actualExternalRef, _, err := unstructured.NestedString(u.Object, "status", "externalRef")
-	if err != nil {
-		return "", fmt.Errorf("reading status.externalRef: %w", err)
-	}
-	if actualExternalRef == "" {
-		return "", k8s.NewReferenceNotReadyError(u.GroupVersionKind(), key)
-	}
-	r.External = actualExternalRef
-	return r.External, nil
+	return nil
 }

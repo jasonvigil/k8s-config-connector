@@ -27,3 +27,11 @@ type ExternalNormalizer interface {
 	// the `status.externalRef` or other field as the "External" value
 	NormalizedExternal(ctx context.Context, reader client.Reader, otherNamespace string) (string, error)
 }
+
+type RefNormalizer interface {
+	// Normalize expects the implemented struct has a "External" field, and this function
+	// assigns a value to the "External" field if it is empty.
+	// In general, it retrieves the corresponding ConfigConnector object from the cluster, using
+	// the `status.externalRef` or other field as the "External" value
+	Normalize(ctx context.Context, reader client.Reader, otherNamespace string) error
+}
